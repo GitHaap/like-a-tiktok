@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Like a TikTok</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+  </head>
+  <body>
+    <div id="app">
+      <svg height="100" width="800">
+        <text
+          class="text-centered label is-size-1 is-unselectable"
+          filter="url(#like-a-tiktok)"
+          x="0%"
+          y="60%"
+        >
+          🎵 Like a TikTok
+        </text>
+      </svg>
+      <!--tiktok風フィルタ-->
+      <svg id="tiktokfilter" width="0" height="0">
+        <filter id="like-a-tiktok">
+          <feColorMatrix
+            type="matrix"
+            in="SourceGraphic"
+            result="cyan_"
+            values="0 0 0 0 0
+                    1 1 1 0 0 
+                    1 1 1 0 0 
+                    0 0 0 1 0"
+          />
+          <feOffset in="cyan_" dx="-1.5" dy="-1.5" result="cyan" />
+          <feColorMatrix
+            type="matrix"
+            in="SourceGraphic"
+            result="magenta_"
+            values="5 1 1 0 0
+                    0 0 0 0 0 
+                    0 0 0.5 0 0 
+                    0 0 0 1 0"
+          />
+          <feOffset in="magenta_" dx="1.5" dy="1.5" result="magenta" />
+          <feBlend mode="screen" in="cyan" in2="magenta" />
+        </filter>
+      </svg>
+
+      <div class="container">
+        <div class="box">
+          <div class="field is-horizontal">
+            <div class="field-label is-normal">
+              <label class="label">Input</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                  <input
+                    class="input"
+                    type="text"
+                    placeholder="テキストを入力してください"
+                    v-model="sourceText"
+                  />
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="field is-horizontal">
+            <div class="field-label is-normal is-unselectable">
+              <label class="label">Output</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <svg id="outputSvg" height="100" width="700">
+                  <text
+                    class="text-centered is-size-1"
+                    filter="url(#like-a-tiktok)"
+                    x="0%"
+                    y="60%"
+                  >
+                    {{sourceText}}
+                  </text>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let app = new Vue({
+        el: "#app",
+        data() {
+          return {
+            // 入力文字
+            sourceText: "🎶😈👍",
+          };
+        },
+        methods: {},
+      });
+    </script>
+  </body>
+</html>
