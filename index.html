@@ -9,12 +9,36 @@
       href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css"
     />
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+    <style>
+      .buruburu-hover:hover {
+        display: inline-block;
+        animation: hurueru 0.1s infinite;
+      }
+
+      @keyframes hurueru {
+        0% {
+          transform: translate(0px, 0px) rotateZ(0deg);
+        }
+        25% {
+          transform: translate(1px, 0px) rotateZ(1deg);
+        }
+        50% {
+          transform: translate(0px, 1px) rotateZ(0deg);
+        }
+        75% {
+          transform: translate(1px, 0px) rotateZ(-1deg);
+        }
+        100% {
+          transform: translate(0px, 0px) rotateZ(0deg);
+        }
+      }
+    </style>
   </head>
   <body>
     <div id="app">
-      <svg height="100" width="800">
+      <svg height="100" width="500">
         <text
-          class="text-centered label is-size-1 is-unselectable"
+          class="text-centered label is-size-1 is-unselectable buruburu-hover"
           filter="url(#like-a-tiktok)"
           x="0%"
           y="60%"
@@ -34,7 +58,7 @@
                     1 1 1 0 0 
                     0 0 0 1 0"
           />
-          <feOffset in="cyan_" dx="-1.5" dy="-1.5" result="cyan" />
+          <feOffset in="cyan_" :dx="-gap" :dy="-gap" result="cyan" />
           <feColorMatrix
             type="matrix"
             in="SourceGraphic"
@@ -44,16 +68,17 @@
                     0 0 0.5 0 0 
                     0 0 0 1 0"
           />
-          <feOffset in="magenta_" dx="1.5" dy="1.5" result="magenta" />
+          <feOffset in="magenta_" :dx="gap" :dy="gap" result="magenta" />
           <feBlend mode="screen" in="cyan" in2="magenta" />
         </filter>
       </svg>
 
-      <div class="container">
+      <div class="container is-fluid">
         <div class="box">
+          <!--テキスト変換-->
           <div class="field is-horizontal">
             <div class="field-label is-normal">
-              <label class="label">Input</label>
+              <label class="label">Emoji Input</label>
             </div>
             <div class="field-body">
               <div class="field">
@@ -71,9 +96,9 @@
 
           <div class="field is-horizontal">
             <div class="field-label is-normal is-unselectable">
-              <label class="label">Output</label>
+              <label class="label">Emoji Output</label>
             </div>
-            <div class="field-body">
+            <div class="field-body buruburu-hover">
               <div class="field">
                 <svg id="outputSvg" height="100" width="700">
                   <text
@@ -88,6 +113,48 @@
               </div>
             </div>
           </div>
+
+          <!--イメージ変換-->
+          <div class="field is-horizontal">
+            <div class="field-label is-normal is-unselectable">
+              <label class="label">Image Input</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <div class="imagePreview">
+                  <input
+                    type="file"
+                    class="file_input"
+                    name="photo"
+                    @change="onFileChange"
+                    accept="image/*"
+                  />
+                  <br />
+                  <img :src="uploadedImage.src" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field is-horizontal">
+            <div class="field-label is-normal is-unselectable">
+              <label class="label">Image Output</label>
+            </div>
+            <div class="field-body buruburu-hover">
+              <div class="field">
+                <svg
+                  id="outputImgSvg"
+                  :height="uploadedImage.height"
+                  :width="uploadedImage.width"
+                >
+                  <image
+                    :xlink:href="uploadedImage.src"
+                    filter="url(#like-a-tiktok)"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -97,11 +164,30 @@
         el: "#app",
         data() {
           return {
+            // 重ね合わせの際のずれ
+            gap: 2,
             // 入力文字
             sourceText: "🎶😈👍",
+            // 入力画像
+            uploadedImage: new Image(),
           };
         },
-        methods: {},
+        methods: {
+          onFileChange(e) {
+            let files = e.target.files || e.dataTransfer.files;
+            this.createImage(files[0]);
+          },
+          // アップロードした画像を表示
+          createImage(file) {
+            let reader = new FileReader();
+            reader.onload = (e) => {
+              let img = new Image();
+              img.src = e.target.result;
+              this.uploadedImage = img;
+            };
+            reader.readAsDataURL(file);
+          },
+        },
       });
     </script>
   </body>
