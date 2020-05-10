@@ -63,9 +63,9 @@
             type="matrix"
             in="SourceGraphic"
             result="magenta_"
-            values="5 1 1 0 0
+            values="9 1 1 0 0
                     0 0 0 0 0 
-                    0 0 0.5 0 0 
+                    0.2 0.2 0.2 0 0
                     0 0 0 1 0"
           />
           <feOffset in="magenta_" :dx="gap" :dy="gap" result="magenta" />
@@ -75,83 +75,140 @@
 
       <div class="container is-fluid">
         <div class="box">
-          <!--テキスト変換-->
+          <!--設定-->
+          <div class="field is-horizontal">
+            <div class="field-label">
+              <label class="label">Convert target</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <div class="control">
+                  <label class="radio">
+                    <input
+                      type="radio"
+                      name="question"
+                      v-model="convertTarget"
+                      value="1"
+                    />
+                    emoji
+                  </label>
+                  <label class="radio">
+                    <input
+                      type="radio"
+                      name="question"
+                      v-model="convertTarget"
+                      value="2"
+                    />
+                    image
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="field is-horizontal">
             <div class="field-label is-normal">
-              <label class="label">Emoji Input</label>
+              <label class="label">Overlap gap</label>
             </div>
             <div class="field-body">
               <div class="field">
-                <p class="control">
-                  <input
-                    class="input"
-                    type="text"
-                    placeholder="テキストを入力してください"
-                    v-model="sourceText"
-                  />
-                </p>
+                <div class="control">
+                  <div class="select">
+                    <select v-model="gap">
+                      <option v-for="n in 10" :value="n">{{n}}</option>
+                    </select>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <div class="field is-horizontal">
-            <div class="field-label is-normal is-unselectable">
-              <label class="label">Emoji Output</label>
-            </div>
-            <div class="field-body buruburu-hover">
-              <div class="field">
-                <svg id="outputSvg" height="100" width="700">
-                  <text
-                    class="text-centered is-size-1"
-                    filter="url(#like-a-tiktok)"
-                    x="0%"
-                    y="60%"
-                  >
-                    {{sourceText}}
-                  </text>
-                </svg>
+        <div class="box">
+          <div v-if="convertTarget==1">
+            <!--テキスト変換-->
+            <div class="field is-horizontal">
+              <div class="field-label is-normal">
+                <label class="label">Input</label>
+              </div>
+              <div class="field-body">
+                <div class="field">
+                  <p class="control">
+                    <input
+                      class="input"
+                      type="text"
+                      placeholder="emoji"
+                      v-model="sourceText"
+                    />
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
 
-          <!--イメージ変換-->
-          <div class="field is-horizontal">
-            <div class="field-label is-normal is-unselectable">
-              <label class="label">Image Input</label>
-            </div>
-            <div class="field-body">
-              <div class="field">
-                <div class="imagePreview">
-                  <input
-                    type="file"
-                    class="file_input"
-                    name="photo"
-                    @change="onFileChange"
-                    accept="image/*"
-                  />
-                  <br />
-                  <img :src="uploadedImage.src" />
+            <div class="field is-horizontal">
+              <div class="field-label is-normal is-unselectable">
+                <label class="label">Output</label>
+              </div>
+              <div class="field-body buruburu-hover">
+                <div class="field">
+                  <svg id="outputSvg" height="100" width="700">
+                    <text
+                      class="text-centered is-size-1"
+                      filter="url(#like-a-tiktok)"
+                      x="0%"
+                      y="60%"
+                    >
+                      {{sourceText}}
+                    </text>
+                  </svg>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="field is-horizontal">
-            <div class="field-label is-normal is-unselectable">
-              <label class="label">Image Output</label>
+          <div v-if="convertTarget==2">
+            <!--イメージ変換-->
+            <div class="field is-horizontal">
+              <div class="field-label is-normal is-unselectable">
+                <label class="label">Input</label>
+              </div>
+              <div class="field-body">
+                <div class="field">
+                  <div class="imagePreview">
+                    <input
+                      type="file"
+                      class="file_input"
+                      name="photo"
+                      @change="onFileChange"
+                      accept="image/*"
+                    />
+                    <br />
+                    <img
+                      :src="uploadedImage.src"
+                      :height="uploadedImage.height"
+                      :width="uploadedImage.width"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="field-body buruburu-hover">
-              <div class="field">
-                <svg
-                  id="outputImgSvg"
-                  :height="uploadedImage.height"
-                  :width="uploadedImage.width"
-                >
-                  <image
-                    :xlink:href="uploadedImage.src"
-                    filter="url(#like-a-tiktok)"
-                  />
-                </svg>
+
+            <div class="field is-horizontal">
+              <div class="field-label is-normal is-unselectable">
+                <label class="label">Output</label>
+              </div>
+              <div class="field-body buruburu-hover">
+                <div class="field">
+                  <svg
+                    id="outputImgSvg"
+                    :height="uploadedImage.height"
+                    :width="uploadedImage.width"
+                  >
+                    <image
+                      :xlink:href="uploadedImage.src"
+                      filter="url(#like-a-tiktok)"
+                    />
+                  </svg>
+                </div>
               </div>
             </div>
           </div>
@@ -164,6 +221,8 @@
         el: "#app",
         data() {
           return {
+            // 変換対象
+            convertTarget: 1,
             // 重ね合わせの際のずれ
             gap: 2,
             // 入力文字
@@ -171,6 +230,11 @@
             // 入力画像
             uploadedImage: new Image(),
           };
+        },
+        created() {
+          let img = new Image();
+          img.src = "./music_headphone_man.png";
+          this.uploadedImage = img;
         },
         methods: {
           onFileChange(e) {
